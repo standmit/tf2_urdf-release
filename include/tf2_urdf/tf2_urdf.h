@@ -29,6 +29,7 @@
 #define TF2_URDF_H_
 
 #include <urdf_model/pose.h>
+#include <urdf_model/joint.h>
 #include <geometry_msgs/Vector3.h>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Point32.h>
@@ -126,6 +127,33 @@ inline geometry_msgs::Transform toMsg(const urdf::Pose& in, geometry_msgs::Trans
     return out;
 }
 
+// ----------------------------------------------------------------------------
+
+inline void fromMsg(const geometry_msgs::Transform& in, urdf::Joint& out) {
+    fromMsg(in, out.parent_to_joint_origin_transform);
+}
+
+inline geometry_msgs::Transform toMsg(const urdf::Joint& in, geometry_msgs::Transform& out) {
+    toMsg(in.parent_to_joint_origin_transform, out);
+    return out;
+}
+
+// ----------------------------------------------------------------------------
+
+inline void fromMsg(const geometry_msgs::TransformStamped& in, urdf::Joint& out) {
+    out.parent_link_name = in.header.frame_id;
+    out.child_link_name = in.child_frame_id;
+    fromMsg(in.transform, out.parent_to_joint_origin_transform);
+}
+
+inline geometry_msgs::TransformStamped toMsg(const urdf::Joint& in) {
+    geometry_msgs::TransformStamped msg;
+    msg.header.frame_id = in.parent_link_name;
+    msg.child_frame_id = in.child_link_name;
+    toMsg(in.parent_to_joint_origin_transform, msg.transform);
+    return msg;
+}
+
 }
 
 // ============================================================================
@@ -152,6 +180,14 @@ inline void fromMsg(const geometry_msgs::Transform& in, Pose& out) {
     tf2::fromMsg(in, out);
 }
 
+inline void fromMsg(const geometry_msgs::Transform& in, Joint& out) {
+    tf2::fromMsg(in, out);
+}
+
+inline void fromMsg(const geometry_msgs::TransformStamped& in, Joint& out) {
+    tf2::fromMsg(in, out);
+}
+
 inline geometry_msgs::Vector3 toMsg(const Vector3& in) {
     return tf2::toMsg(in);
 }
@@ -161,6 +197,10 @@ inline geometry_msgs::Quaternion toMsg(const Rotation& in) {
 }
 
 inline geometry_msgs::Pose toMsg(const Pose& in) {
+    return tf2::toMsg(in);
+}
+
+inline geometry_msgs::TransformStamped toMsg(const Joint& in) {
     return tf2::toMsg(in);
 }
 

@@ -177,6 +177,31 @@ TEST(TfURDF, URDFPoseToTFTransform) {
     ASSERT_DOUBLE_EQ(urdf_pose.rotation.w, tf_quat.w());
 }
 
+TEST(TfURDF, TransformStampedToURDFJoint) {
+    geometry_msgs::TransformStamped transform;
+    transform.header.frame_id = "parent";
+    transform.child_frame_id = "child";
+    transform.transform.translation.x = rand_double(10.);
+    transform.transform.translation.y = rand_double(10.);
+    transform.transform.translation.z = rand_double(10.);
+    {
+        tf2::Quaternion tf_quat;
+        tf_quat.setRPY(rand_double(M_PI), rand_double(M_PI), rand_double(M_PI));
+        tf2::convert(tf_quat, transform.transform.rotation);
+    }
+    urdf::Joint joint;
+    tf2::convert(transform, joint);
+    ASSERT_EQ(transform.header.frame_id, joint.parent_link_name);
+    ASSERT_EQ(transform.child_frame_id, joint.child_link_name);
+    ASSERT_DOUBLE_EQ(transform.transform.translation.x, joint.parent_to_joint_origin_transform.position.x);
+    ASSERT_DOUBLE_EQ(transform.transform.translation.y, joint.parent_to_joint_origin_transform.position.y);
+    ASSERT_DOUBLE_EQ(transform.transform.translation.z, joint.parent_to_joint_origin_transform.position.z);
+    ASSERT_DOUBLE_EQ(transform.transform.rotation.x, joint.parent_to_joint_origin_transform.rotation.x);
+    ASSERT_DOUBLE_EQ(transform.transform.rotation.y, joint.parent_to_joint_origin_transform.rotation.y);
+    ASSERT_DOUBLE_EQ(transform.transform.rotation.z, joint.parent_to_joint_origin_transform.rotation.z);
+    ASSERT_DOUBLE_EQ(transform.transform.rotation.w, joint.parent_to_joint_origin_transform.rotation.w);
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
 

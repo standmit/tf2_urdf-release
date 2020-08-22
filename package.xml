@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>tf2_urdf</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>tf2_urdf</description>
   <maintainer email="standmit@zabstrannik.ru">Andrey Stepanov</maintainer>
   <license>BSD</license>
